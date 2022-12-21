@@ -42,7 +42,8 @@ def scannable_segments(scan_line, sensor_beacons):
     return sensored_points - sensored_beacons
         
 # tests ###############################################################################################################
-assert sensor_beacons('15example.txt') == [  
+examples = sensor_beacons('15example.txt')
+assert examples == [  
     [2, 18, -2, 15], [9, 16, 10, 16], [13, 2, 15, 3], [12, 14, 10, 16], [10, 20, 10, 16], [14, 17, 10, 16], [8, 7, 2, 10], 
     [2, 0, 2, 10], [0, 11, 2, 10], [20, 14, 25, 17], [17, 20, 21, 22], [16, 7, 15, 3], [14, 3, 15, 3], [20, 1, 15, 3]], \
     'parse file check against example file'
@@ -52,12 +53,12 @@ assert distances([(0, 0, -5,  5)]) == [[0, 0, 10]]
 assert distances([(0, 0,  5, -5)]) == [[0, 0, 10]]
 assert distances([(0, 0, -5, -5)]) == [[0, 0, 10]]
 
-assert distances(sensor_beacons('15example.txt')) == [
+assert distances(examples) == [
     [2, 18, 7], [9, 16, 1],  [13, 2, 3],  [12, 14, 4], [10, 20, 4], [14, 17, 5], [8, 7, 9], [2, 0, 10], 
     [0, 11, 3], [20, 14, 8], [17, 20, 6], [16, 7, 5],  [14, 3, 1], [20, 1, 7]], \
     'check against example file'
 
-assert beacons(sensor_beacons('15example.txt')) == [  
+assert beacons(examples) == [  
     [-2, 15],  [10, 16], [15, 3], [10, 16], [10, 16], [10, 16], [2, 10], 
     [2, 10],  [2, 10], [25, 17], [21, 22], [15, 3], [15, 3], [15, 3]], \
     'extract beacon coordinates'
@@ -88,7 +89,8 @@ assert between_inclusive(0, -1,    2) == True
 assert between_inclusive(0, 10,   15) == False
 assert between_inclusive(0, -15, -10) == False
 
-assert scannable_segments(10, sensor_beacons('15example.txt')) == 26, 'example'
+assert scannable_segments(10, examples) == 26, 'example'
 
 # answers ###############################################################################################################
-print('Part 1: ', scannable_segments(2_000_000, sensor_beacons('15.txt')))
+actuals = sensor_beacons('15.txt')
+print('Part 1: ', scannable_segments(2_000_000, actuals))
