@@ -33,7 +33,7 @@ def point_count_inclusive(start, end):
 def between_inclusive(value, start, end): 
     return start <= value and value <= end
 
-def scannable_segments(scan_line, sensor_beacons):  
+def part1(scan_line, sensor_beacons):  
     sensor_distances  = distances(sensor_beacons)
     scanline_sensored = merge_segments([sensored(scan_line, *sd) for sd in sensor_distances])
     scanline_beacons  = points_with_y(scan_line, beacons(sensor_beacons))
@@ -89,8 +89,8 @@ assert between_inclusive(0, -1,    2) == True
 assert between_inclusive(0, 10,   15) == False
 assert between_inclusive(0, -15, -10) == False
 
-assert scannable_segments(10, examples) == 26, 'example'
+assert part1(10, examples) == 26, 'example'
 
 # answers ###############################################################################################################
 actuals = sensor_beacons('15.txt')
-print('Part 1: ', scannable_segments(2_000_000, actuals))
+print('Part 1: ', part1(2_000_000, actuals))
