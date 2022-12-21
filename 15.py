@@ -1,83 +1,94 @@
-# https://adventofcode.com/2022/day/15
-# each sensor has an origin and a Manhattan distance (from origin to closest beacon)
-# thus we know that there is no beacon between that sensor and any other point with a Manhattan distance <= above
 import re
 from functools import reduce 
 
-split_on = 'Sensor at x=|, y=|: closest beacon is at x='
-
-def parse(filename):
+def sensor_beacons(filename):
+    split_on = 'Sensor at x=|, y=|: closest beacon is at x='
     parse_line = lambda row: [int(c) for c in re.split(split_on, row.strip()) if c != '']
     return [parse_line(row) for row in open(filename, 'r').readlines()]
 
-example = parse('15example.txt')
-actual  = parse('15.txt')
+def distances(sensor_beacons): 
+    return [[sx,sy,abs(sx - bx) + abs(sy - by)] for sx,sy,bx,by in sensor_beacons]
 
+def beacons(sensor_beacons): 
+    return [[bx,by] for _,_,bx,by in sensor_beacons]
 
-def sensor_scan_distances(sensor_beacon_pairs):
-    manhatten_distance = lambda x1, y1, x2, y2: abs(x1 - x2) + abs(y1 - y2)
-    return [(a, b, manhatten_distance(a, b, c, d)) for a, b, c, d in sensor_beacon_pairs]
+def sensored(y, sx, sy, d):
+    dx = d - abs(sy - y)
+    return [] if dx < 0 else [sx - dx, sx + dx]
 
-def merge_segments(a1,a2,b1,b2):
-    if a2 >= b1 : return [[min(a1,b1), max(a2,b2)]]   # assumes sorted points
-    return[[a1,a2],[b1,b2]] # no interaction
+def merge_segment(a1,a2,b1,b2): 
+    return [[min(a1,b1), max(a2,b2)]] if (a2 + 1) >= b1 else [[a1,a2],[b1,b2]]
 
-def intersecting_segment(x1, y1, distance, y2):
-    diff = distance - abs(y1 - y2)
-    return sorted([x1 - diff, x1 + diff])
+def merge_segments(segments):
+    f = lambda acc, s: acc[:-1] + merge_segment(*acc[-1], *s)
+    ss = sorted(s for s in segments if s)
+    return reduce(f, ss[1:], [ss[0]])
 
-def intersecting_segments(scan_line, sensor_dists):
-    def reducer(acc, segment):
-        ms = merge_segments(*acc[-1], *segment)
-        return acc[:-1] + ms
+def points_with_y(y, points): 
+    return {px for px,py in points if py == y}
 
-    all_segments = sorted([intersecting_segment(x, y, d, scan_line) for x, y, d in sensor_dists])
-    return reduce(reducer, all_segments[1:], [all_segments[0]])
+def point_count_inclusive(start, end): 
+    return abs(start - end) + 1
 
-def segment_point_count(one,two):
-    return abs(one - two) + 1
+def between_inclusive(value, start, end): 
+    return start <= value and value <= end
 
-def beacons_by_row(row, sensor_beacon_pairs):
-    return set([bx for _,_,bx,by in sensor_beacon_pairs if row == by])
-
-def beacon_in_segment(b, s1, s2):
-    return s1 <= b and b <= s2
-
-def beacons_in_segment(beacons, s1, s2):
-    return sum([beacon_in_segment(b,s1,s2) for b in beacons])
-
-def part1(row, sensor_beacon_pairs):
-    bbrs = beacons_by_row(row, sensor_beacon_pairs)
-    iss  = intersecting_segments(row, sensor_scan_distances(sensor_beacon_pairs))
-    #dont count beacons
-    point_count  = sum([segment_point_count(*s) for s in iss])
-    beacon_count = sum([beacons_in_segment(bbrs, *s) for s in iss]) 
-    print(point_count, beacon_count, bbrs)
-    return point_count - beacon_count
-
+def scannable_segments(scan_line, sensor_beacons):  
+    sensor_distances  = distances(sensor_beacons)
+    scanline_sensored = merge_segments([sensored(scan_line, *sd) for sd in sensor_distances])
+    scanline_beacons  = points_with_y(scan_line, beacons(sensor_beacons))
+    sensored_points   = sum([point_count_inclusive(*s) for s in scanline_sensored])
+    sensored_beacons  = sum([between_inclusive(b, *s) for s in scanline_sensored for b in scanline_beacons]) 
+    return sensored_points - sensored_beacons
+        
 # tests ###############################################################################################################
-assert parse('15example.txt') == [  [2, 18, -2, 15], [9, 16, 10, 16], [13, 2, 15, 3], [12, 14, 10, 16], 
-                                    [10, 20, 10, 16], [14, 17, 10, 16], [8, 7, 2, 10], [2, 0, 2, 10],  
-                                    [0, 11, 2, 10],   [20, 14, 25, 17], [17, 20, 21, 22], [16, 7, 15, 3],  
-                                    [14, 3, 15, 3], [20, 1, 15, 3]], 'parse file check against example file'
+assert sensor_beacons('15example.txt') == [  
+    [2, 18, -2, 15], [9, 16, 10, 16], [13, 2, 15, 3], [12, 14, 10, 16], [10, 20, 10, 16], [14, 17, 10, 16], [8, 7, 2, 10], 
+    [2, 0, 2, 10], [0, 11, 2, 10], [20, 14, 25, 17], [17, 20, 21, 22], [16, 7, 15, 3], [14, 3, 15, 3], [20, 1, 15, 3]], \
+    'parse file check against example file'
 
-assert sensor_scan_distances([(0,0, 5, 5),(0,0,-5, 5),(0,0,-5,-5),(0,0, 5,-5)]) == [(0, 0, 10), (0, 0, 10), (0, 0, 10), 
-                                                        (0, 0, 10)], 'sensor_scan_distance check for all 4 quadrents'
+assert distances([(0, 0,  5,  5)]) == [[0, 0, 10]]
+assert distances([(0, 0, -5,  5)]) == [[0, 0, 10]]
+assert distances([(0, 0,  5, -5)]) == [[0, 0, 10]]
+assert distances([(0, 0, -5, -5)]) == [[0, 0, 10]]
 
-assert sensor_scan_distances(example) == [(2, 18, 7), (9, 16, 1),  (13, 2, 3),  (12, 14, 4), (10, 20, 4), (14, 17, 5), (8, 7, 9), (2, 0, 10), 
-                              (0, 11, 3), (20, 14, 8), (17, 20, 6), (16, 7, 5),  (14, 3, 1),  
-                              (20, 1, 7)], 'sensor_scan_distance check against example file'
+assert distances(sensor_beacons('15example.txt')) == [
+    [2, 18, 7], [9, 16, 1],  [13, 2, 3],  [12, 14, 4], [10, 20, 4], [14, 17, 5], [8, 7, 9], [2, 0, 10], 
+    [0, 11, 3], [20, 14, 8], [17, 20, 6], [16, 7, 5],  [14, 3, 1], [20, 1, 7]], \
+    'check against example file'
 
-assert merge_segments(0,5,1,6) == [[0,6]], 'overlap to right'
-assert merge_segments(1,6,0,5) == [[0,6]], 'overlap to left'
-assert merge_segments(2,5,1,6) == [[1,6]], 'inside'
-assert merge_segments(0,7,1,6) == [[0,7]], 'wraps'
-assert merge_segments(0,5,7,10) == [[0,5],[7,10]], 'no overlap'
+assert beacons(sensor_beacons('15example.txt')) == [  
+    [-2, 15],  [10, 16], [15, 3], [10, 16], [10, 16], [10, 16], [2, 10], 
+    [2, 10],  [2, 10], [25, 17], [21, 22], [15, 3], [15, 3], [15, 3]], \
+    'extract beacon coordinates'
 
-assert intersecting_segments(10, [(8, 7, 9)]) == [[2,14]], 'already_scanned_segment example check for sensor at 8,7'
-assert intersecting_segments(10,sensor_scan_distances(example)) == [[-2, 24]], 'example scan row'
-assert part1(10, example) == 26, 'part 1 example answer'
+assert sensored(100, 0, 0, 10)  == [], 'above'
+assert sensored(-100, 0, 0, 10) == [], 'below'
+assert sensored(10, 0, 0, 10)   == [0,0], 'top'
+assert sensored(-10, 0, 0, 10)  == [0,0], 'bottom'
+assert sensored(0, 0, 0, 10)    == [-10,10], 'middle'
 
-# answers #############################################################################################################
-print('Part 1: ', part1(2000000, actual))
+assert merge_segment(0,5,1,6)  == [[0,6]], 'overlap'
+assert merge_segment(0,5,6,8)  == [[0,8]], 'next to'
+assert merge_segment(1,6,2,5)  == [[1,6]], 'inside'
+assert merge_segment(0,7,1,6)  == [[0,7]], 'wraps'
+assert merge_segment(0,7,0,7)  == [[0,7]], 'equal'
+assert merge_segment(0,5,7,10) == [[0,5],[7,10]], 'no overlap'
+assert merge_segments([ [10,12], [], [8, 8], [2, 7], [-2, 2], [11,15]]) == [[-2,8], [10,15]]
 
+assert points_with_y(16, [[-2, 15],  [10, 16], [15, 3], [10, 16], [10, 16], [10, 16], [2, 10], 
+    [2, 10],  [2, 10], [25, 17], [21, 22], [15, 3], [15, 3], [15, 16]]) == {10,15}, \
+    'only points with y are returned no dups'
+
+assert point_count_inclusive(0,0) == 1 
+assert point_count_inclusive(-1,2) == 4
+
+assert between_inclusive(0,  0,    0) == True 
+assert between_inclusive(0, -1,    2) == True
+assert between_inclusive(0, 10,   15) == False
+assert between_inclusive(0, -15, -10) == False
+
+assert scannable_segments(10, sensor_beacons('15example.txt')) == 26, 'example'
+
+# answers ###############################################################################################################
+print('Part 1: ', scannable_segments(2_000_000, sensor_beacons('15.txt')))
