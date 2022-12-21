@@ -24,8 +24,12 @@ def merge_segments(segments):
     ss = sorted(s for s in segments if s)
     return reduce(f, ss[1:], [ss[0]])
 
-def points_with_y(y, points): 
-    return {px for px,py in points if py == y}
+def points_by_y(points): 
+    result = {}
+    for x,y in points:
+        if y not in result: result[y] = set()
+        result[y].add(x)
+    return result 
 
 def point_count_inclusive(start, end): 
     return abs(start - end) + 1
@@ -35,12 +39,17 @@ def between_inclusive(value, start, end):
 
 def part1(scan_line, sensor_beacons):  
     sensor_distances  = distances(sensor_beacons)
+    beacons_by_y =  points_by_y(beacons(sensor_beacons))
     scanline_sensored = merge_segments([sensored(scan_line, *sd) for sd in sensor_distances])
-    scanline_beacons  = points_with_y(scan_line, beacons(sensor_beacons))
+    scanline_beacons  = beacons_by_y[scan_line]
     sensored_points   = sum([point_count_inclusive(*s) for s in scanline_sensored])
     sensored_beacons  = sum([between_inclusive(b, *s) for s in scanline_sensored for b in scanline_beacons]) 
     return sensored_points - sensored_beacons
-        
+
+def part2(sensor_beacons):
+    sensor_distances  = distances(sensor_beacons)
+
+
 # tests ###############################################################################################################
 examples = sensor_beacons('15example.txt')
 assert examples == [  
@@ -77,8 +86,9 @@ assert merge_segment(0,7,0,7)  == [[0,7]], 'equal'
 assert merge_segment(0,5,7,10) == [[0,5],[7,10]], 'no overlap'
 assert merge_segments([ [10,12], [], [8, 8], [2, 7], [-2, 2], [11,15]]) == [[-2,8], [10,15]]
 
-assert points_with_y(16, [[-2, 15],  [10, 16], [15, 3], [10, 16], [10, 16], [10, 16], [2, 10], 
-    [2, 10],  [2, 10], [25, 17], [21, 22], [15, 3], [15, 3], [15, 16]]) == {10,15}, \
+assert points_by_y([[-2, 15],  [10, 16], [15, 3], [10, 16], [10, 16], [10, 16], [2, 10], 
+    [2, 10],  [2, 10], [25, 17], [21, 22], [15, 3], [15, 3], [15, 16]]) == {
+    15: {-2}, 16: {10, 15}, 3: {15}, 10: {2}, 17: {25}, 22: {21}}, \
     'only points with y are returned no dups'
 
 assert point_count_inclusive(0,0) == 1 
