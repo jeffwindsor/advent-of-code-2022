@@ -54,8 +54,8 @@ def part1(filename):
     path_totalsize = totals(build(parse_cmds(get_inputs(filename))))
     return sum([s for s in path_totalsize.values() if s <= 100000])
 
-assert part1('07-example.txt') == 95437
-print("Part 1: ", part1('07.txt'))
+assert part1('./examples/07') == 95437
+print("Part 1: ", part1('./inputs/07'))
 
 def part2(filename):
     path_totalsize = totals(build(parse_cmds(get_inputs(filename))))
@@ -63,11 +63,11 @@ def part2(filename):
     needed_space = 30000000 - (70000000 - root_size)
     return min([s for s in path_totalsize.values() if s >= needed_space])
 
-assert part2('07-example.txt') == 24933642
-print("Part 2: ", part2('07.txt'))
+assert part2('./examples/07') == 24933642
+print("Part 2: ", part2('./inputs/07'))
 
 # PARSE
-assert parse_cmds(get_inputs('07-example.txt')) == [
+assert parse_cmds(get_inputs('./examples/07')) == [
     ['cd', [['/']]],
     ['ls', [['dir', 'a'], ['14848514', 'b.txt'], ['8504156', 'c.dat'], ['dir', 'd']]],
     ['cd', [['a']]],
@@ -98,7 +98,7 @@ ls(root, [['4060174', 'j'], ['dir', 'a'], ['8033020','d.log'], ['5626152','d.ext
 assert root == { 'path':'', 'directories':set(), 'size': 24933642}, 'ls only adds size'
 
 # build
-assert build(parse_cmds(get_inputs('07-example.txt'))) == {
+assert build(parse_cmds(get_inputs('./examples/07'))) == {
     '':     {'path': '', 'directories': {'/a', '/d'}, 'size': 23352670}, 
     '/a':   {'path': '/a', 'directories': {'/a/e'}, 'size': 94269}, 
     '/a/e': {'path': '/a/e', 'directories': set(), 'size': 584}, 

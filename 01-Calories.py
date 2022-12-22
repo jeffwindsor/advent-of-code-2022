@@ -4,6 +4,6 @@ def calories_per_elf(filename):
                    for line in open(filename, 'r').read().split('\n\n')], reverse=True)
 
 
-calories = calories_per_elf('01.txt')
+calories = calories_per_elf('./inputs/01')
 print(f'Part 1: {calories[0]}')
 print(f'Part 2: {sum(calories[:3])}')

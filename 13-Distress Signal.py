@@ -3,8 +3,8 @@ from math import prod
 
 inputs = lambda filename: [[ eval(l) for l in b.split('\n')] 
                                      for b in open(filename, 'r').read().split('\n\n')]
-examples = inputs('13-example.txt')
-actuals = inputs('13.txt')
+examples = inputs('./examples/13')
+actuals = inputs('./inputs/13')
 
 def compare(l, r):
     match l, r:

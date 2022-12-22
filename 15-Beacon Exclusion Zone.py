@@ -61,7 +61,7 @@ def part2(sensor_beacons):
             return (4000000 * x) + scan_line
 
 # tests ###############################################################################################################
-examples = sensor_beacons('15example.txt')
+examples = sensor_beacons('./examples/15')
 assert examples == [  
     [2, 18, -2, 15], [9, 16, 10, 16], [13, 2, 15, 3], [12, 14, 10, 16], [10, 20, 10, 16], [14, 17, 10, 16], [8, 7, 2, 10], 
     [2, 0, 2, 10], [0, 11, 2, 10], [20, 14, 25, 17], [17, 20, 21, 22], [16, 7, 15, 3], [14, 3, 15, 3], [20, 1, 15, 3]], \
@@ -114,6 +114,6 @@ assert between_inclusive(0, -15, -10) == False
 assert part1(10, examples) == 26, 'example'
 
 # answers ###############################################################################################################
-actuals = sensor_beacons('15.txt')
+actuals = sensor_beacons('./inputs/15')
 print('Part 1: ', part1(2_000_000, actuals))
 print('Part 2: ', part2(actuals))

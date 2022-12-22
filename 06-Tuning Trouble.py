@@ -24,6 +24,6 @@ assert part2('nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg') ==  29
 assert part2('zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw') ==  26
 
 #answer
-part1('1: ', get_inputs('06.txt')) 
-part2('2: ',get_inputs('06.txt'))
+part1('1: ', get_inputs('./inputs/06')) 
+part2('2: ',get_inputs('./inputs/06'))
 

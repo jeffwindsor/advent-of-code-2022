@@ -30,13 +30,13 @@ def move_containers(crane,inputs):
 crate_mover_9000 = lambda stack: stack[::-1]
 crate_mover_9001 = lambda stack: stack
 take_top         = lambda stacks: ''.join([s[0] for s in stacks])
-actuals  = get_inputs('05.txt')
-examples = get_inputs('05-example.txt')
+actuals  = get_inputs('./inputs/05')
+examples = get_inputs('./examples/05')
 print('Part 1', take_top(move_containers(crate_mover_9000, actuals)))
 print('Part 2', take_top(move_containers(crate_mover_9001, actuals)))
 
 
-assert get_inputs('05-example.txt') == ([[1,2,1],[3,1,3],[2,2,1],[1,1,2]] ,['NZ', 'DCM', 'P'])
+assert get_inputs('./examples/05') == ([[1,2,1],[3,1,3],[2,2,1],[1,1,2]] ,['NZ', 'DCM', 'P'])
 assert crate_mover_9000('ABC') == 'CBA'
 assert crate_mover_9001('ABC') == 'ABC'
 assert take_top(['JK','DEF','GHICBA']) == 'JDG'

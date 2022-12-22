@@ -1,8 +1,8 @@
 normalize = lambda p: (p[0]-500, p[1])
 paths = lambda filename: [[ normalize(eval(l)) for l in b.split(' -> ')] 
                                     for b in open(filename, 'r').readlines()]
-examples = paths('14-example.txt')
-actuals  = paths('14.txt')
+examples = paths('./examples/14')
+actuals  = paths('./inputs/14')
 
 START_COL, START_ROW = 0,0
 

@@ -4,7 +4,7 @@ contains = lambda a1,a2,b1,b2: (a1 <= b1 and b2 <= a2) or (b1 <= a1 and a2 <= b2
 overlaps = lambda a1,a2,b1,b2: (a1 <= b1 <= a2) or (a1 <= b2 <= a2) or (b1 <= a1 <= b2) or (b1 <= a2 <= b2) 
 part1    = lambda inputs: sum([contains(i[0],i[1],i[2],i[3]) for i in inputs])
 part2    = lambda inputs: sum([overlaps(i[0],i[1],i[2],i[3]) for i in inputs])
-actuals  = parse('04.txt')
+actuals  = parse('./inputs/04')
 
 print('Part 1: ', part1(actuals))
 print('Part 2: ', part2(actuals))

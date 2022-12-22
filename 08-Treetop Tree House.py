@@ -63,17 +63,17 @@ def part2(filename):
     return max(all_scenic_scores)
     
 #tests
-max_row,max_col,location_heights = parse(read_inputs('08-example.txt'))
+max_row,max_col,location_heights = parse(read_inputs('./examples/08'))
 assert edge_visible(1,1,max_row,max_col,location_heights) == True, 'top-left 5 is visible'
 assert edge_visible(1,2,max_row,max_col,location_heights) == True, 'top-middle 5 is visible'
 assert edge_visible(1,3,max_row,max_col,location_heights) == False, 'top-right 1 is not visible'
 assert edge_visible(2,1,max_row,max_col,location_heights) == True, 'left-middle 5 is visible'
 
-assert part1('08-example.txt') == 21
+assert part1('./examples/08') == 21
 
 assert scenic_score(1,2,max_row,max_col,location_heights) == 4, ''
 assert scenic_score(3,2,max_row,max_col,location_heights) == 8, ''
-assert part2('08-example.txt') == 8
+assert part2('./examples/08') == 8
 
 # answers
 print(f'Part 1: {part1("08.txt")}')

@@ -9,7 +9,7 @@ answer    = lambda ss: sum([priority(dupes(s)) for s in ss])
 part1    = lambda ls: answer([split_mid(l) for l in ls ])
 part2    = lambda ls: answer([[a, dupes([b,c])] for a,b,c in group(3,ls)])
 
-actuals = lines('03.txt')
+actuals = lines('./inputs/03')
 print('Part 1: ',part1(actuals))
 print('Part 2: ',part2(actuals))
 

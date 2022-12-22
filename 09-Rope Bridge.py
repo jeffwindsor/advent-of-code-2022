@@ -57,7 +57,7 @@ def part2(direction):
             
 ################################################################
 ### test: input parsing to string
-assert get_inputs('09-example.txt') == 'RRRRUUUULLLDRRRRDLLLLLRR'
+assert get_inputs('./examples/09') == 'RRRRUUUULLLDRRRRDLLLLLRR'
 
 ### test: movements of head
 for m,result in [('U',up),('D',down),('L',left),('R',right)]:

@@ -49,6 +49,6 @@ def print_answer(prefix, answer):
 
 print_answer("example: ", part2(pre2))
 
-day = get_inputs('10.txt')
+day = get_inputs('./inputs/10')
 print("Part 1: ", part1(day))
 print_answer("Part 2:", part2(day))

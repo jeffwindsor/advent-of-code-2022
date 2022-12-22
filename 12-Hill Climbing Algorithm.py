@@ -58,8 +58,8 @@ def part2(start_point, end_point, rows, cols, heights):
         a_point) for a_point in list_of_as])
 
 ## data #######################################################################
-examples = parse('12-example.txt')
-actuals  = parse('12.txt')
+examples = parse('./examples/12')
+actuals  = parse('./inputs/12')
 
 ## test #######################################################################
 start_point, end_point, rows, cols, heights = examples

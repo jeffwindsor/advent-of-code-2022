@@ -14,8 +14,8 @@ parse_block = lambda ls: [
         int(ls[5][len('    If false: throw to monkey '):]),
         0]
 parse = lambda filename: [ parse_block(block.splitlines()) for block in open(filename).read().split('\n\n')]
-examples = lambda: parse('11-example.txt')
-actuals  = lambda: parse('11.txt')
+examples = lambda: parse('./examples/11')
+actuals  = lambda: parse('./inputs/11')
 
 ## functions #####################################################################################
 worry_relief = lambda w: w//3
