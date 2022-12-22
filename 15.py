@@ -22,7 +22,7 @@ def merge_segment(a1,a2,b1,b2):
 def merge_segments(segments):
     f = lambda acc, s: acc[:-1] + merge_segment(*acc[-1], *s)
     ss = sorted(s for s in segments if s)
-    return reduce(f, ss[1:], [ss[0]])
+    return ss if len(ss) < 2 else reduce(f, ss[1:], [ss[0]])
 
 def points_by_y(points): 
     result = {}
@@ -39,16 +39,26 @@ def between_inclusive(value, start, end):
 
 def part1(scan_line, sensor_beacons):  
     sensor_distances  = distances(sensor_beacons)
-    beacons_by_y =  points_by_y(beacons(sensor_beacons))
+    beacons_by_y      = points_by_y(beacons(sensor_beacons))
+
     scanline_sensored = merge_segments([sensored(scan_line, *sd) for sd in sensor_distances])
     scanline_beacons  = beacons_by_y[scan_line]
+    
     sensored_points   = sum([point_count_inclusive(*s) for s in scanline_sensored])
     sensored_beacons  = sum([between_inclusive(b, *s) for s in scanline_sensored for b in scanline_beacons]) 
     return sensored_points - sensored_beacons
 
 def part2(sensor_beacons):
     sensor_distances  = distances(sensor_beacons)
+    beacons_by_y      = points_by_y(beacons(sensor_beacons))
 
+    for scan_line in range(4_000_000, 0, -1):
+        bs = [[]] if scan_line not in beacons_by_y else [[bx, scan_line] for bx in beacons_by_y[scan_line]]
+        ss = [sensored(scan_line, *sd) for sd in sensor_distances]
+        ms = merge_segments(ss + bs)
+        if len(ms) > 1: 
+            x = ms[0][1] + 1
+            return (4000000 * x) + scan_line
 
 # tests ###############################################################################################################
 examples = sensor_beacons('15example.txt')
@@ -85,6 +95,8 @@ assert merge_segment(0,7,1,6)  == [[0,7]], 'wraps'
 assert merge_segment(0,7,0,7)  == [[0,7]], 'equal'
 assert merge_segment(0,5,7,10) == [[0,5],[7,10]], 'no overlap'
 assert merge_segments([ [10,12], [], [8, 8], [2, 7], [-2, 2], [11,15]]) == [[-2,8], [10,15]]
+assert merge_segments([[],[]]) == []
+assert merge_segments([[0,1],]) == [[0,1]]
 
 assert points_by_y([[-2, 15],  [10, 16], [15, 3], [10, 16], [10, 16], [10, 16], [2, 10], 
     [2, 10],  [2, 10], [25, 17], [21, 22], [15, 3], [15, 3], [15, 16]]) == {
@@ -104,3 +116,4 @@ assert part1(10, examples) == 26, 'example'
 # answers ###############################################################################################################
 actuals = sensor_beacons('15.txt')
 print('Part 1: ', part1(2_000_000, actuals))
+print('Part 2: ', part2(actuals))
