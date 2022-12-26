@@ -50,8 +50,8 @@ def count_external_sides(points):
     return count_exposed_sides(filled)
 
 # answers #############################################################
-#print('Part 1: ', count_exposed_sides(inputs))
-#print('Part 2: ', count_external_sides(inputs))
+print('Part 1: ', count_exposed_sides(inputs))
+print('Part 2: ', count_external_sides(inputs))
 
 
 # tests ###############################################################
