@@ -13,9 +13,7 @@ from itertools import cycle
 # from collections import deque
 
 RIGHT, LEFT = '>', '<'
-empty = 0b000000000
-wall = 0b100000001
-bottom = 0b111111111
+wall, bottom = 0b100000001, 0b111111111
 shapes = [[0b000111100],
           [0b000010000,
            0b000111000,
