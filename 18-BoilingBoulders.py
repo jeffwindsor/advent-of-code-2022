@@ -10,10 +10,10 @@ max_width = 100
 examples = parse_file('examples/18')
 inputs   = parse_file('inputs/18')
 
-def neighbors(x, y, z): 
-    return [(x + 1, y, z),(x - 1, y, z),
-            (x, y + 1, z),(x, y - 1, z),
-            (x, y, z + 1),(x, y, z - 1)]
+def neighbors(x,y,z): 
+    return [(x+1,y,z),(x-1,y,z),
+            (x,y+1,z),(x,y-1,z),
+            (x,y,z+1),(x,y,z-1)]
 
 def count_exposed_sides(points):
     empty_neighbors_per_point = (sum(n not in points for n in neighbors(*p)) for p in points)
@@ -34,7 +34,6 @@ def define_bounds(points):
 
 def count_external_sides(points):
     all_points, is_inbounds = define_bounds(points)
-    
     visited = set()
     d = deque([(0,0,0)])    #outside sphere point
     while(d):
@@ -46,8 +45,7 @@ def count_external_sides(points):
         
         d.extend(n for n in neighbors(*p) if is_inbounds(*n) and n not in visited)
 
-    filled = all_points - (visited - points)
-    return count_exposed_sides(filled)
+    return count_exposed_sides(all_points - (visited - points))
 
 
 # tests ###############################################################
