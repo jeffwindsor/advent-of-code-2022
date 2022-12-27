@@ -33,7 +33,6 @@ def all_points_in(nx,xx,ny,xy,nz,xz):
 def count_external_sides(boulders):
     bounds = bounds_around(boulders)
     is_in_bounds = is_in(*bounds)
-    all_points_in_bounds = all_points_in(*bounds)
 
     visited_points = set()
     d = deque([(0,0,0)])    #outside sphere point
@@ -46,7 +45,7 @@ def count_external_sides(boulders):
         
         d.extend(n for n in neighbors(*p) if is_in_bounds(*n) and n not in visited_points)
 
-    return count_exposed_sides(all_points_in_bounds - (visited_points - boulders))
+    return count_exposed_sides(all_points_in(*bounds) - (visited_points - boulders))
 
 
 # tests ###############################################################
