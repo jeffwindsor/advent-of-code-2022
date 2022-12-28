@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 #https:/entofcode.com/2022/day/18
 from collections import deque
 from functools import reduce

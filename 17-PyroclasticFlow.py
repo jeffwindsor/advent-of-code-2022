@@ -1,4 +1,7 @@
+#!/usr/bin/env python3
+
 #https://adventofcode.com/2022/day/17
+
 # rock if moved left  = `<<`
 # rock if moved right = `>>`
 # test moved rock with: rock `&` cavern, 0 == pass, anything else is a fail / collision
