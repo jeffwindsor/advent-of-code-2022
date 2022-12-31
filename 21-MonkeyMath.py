@@ -1,54 +1,43 @@
 #!/usr/bin/env python3
 #https://adventofcode.com/2022/day/21
 
+import sympy
+
 def parse_inputs(filename):
-    pairs = [l.strip().split(': ') for l in open(filename,'r').readlines()]
-    values = dict([(k,int(v)) for k,v in pairs if v.isnumeric()])
-    expressions = dict([(k,v.split(' ')) for k,v in pairs if not v.isnumeric()])
-    return values, expressions
+    return dict([l.strip().split(': ') for l in open(filename,'r').readlines()])
 
-def solve(expression, values):
-    l,op,r = expression
-    if l in values and r in values:
-        return eval(f'{values[l]} {op} {values[r]}')
-    return None
+def substitute(children, nodes):
+    match children.split(' '):
+        case [lh, op, rh]: 
+            slh = substitute(nodes[lh], nodes) if lh in nodes else lh
+            srh = substitute(nodes[rh], nodes) if rh in nodes else rh
+            return f'({slh} {op} {srh})'
+        
+        case [n]:
+            return int(n)
 
-def part1(values,expressions):
-    # while(expressions):
-    for i in range(100):
-        remove_these_from_expressions = []
-        for k,v in expressions.items():
-            result = solve(v, values)
-            print(k,v,result)
-            if result is not None:
-                # move to value dict if solved
-                values[k] = result
-                remove_these_from_expressions.append(k)
-                
-        # stop condition
-        if 'root' in values: 
-            return values['root'] 
+def part1(nodes): 
+    expression = substitute(nodes['root'], nodes).replace(' ','')
+    return eval(expression)
 
-        # remove all solved expressions
-        for k in remove_these_from_expressions:
-            del expressions[k]
-            
-    print(expressions)
+def part2(nodes):
+    del nodes['humn']
+    root = nodes['root'].replace('+','-')
+    expression = substitute(root, nodes).replace(' ','')
+    solution = sympy.solve(expression, sympy.Symbol('humn'))
+    return solution[0]
 
 # answers #########################################################################################
 
-examples = parse_inputs('examples/21')
-inputs   = parse_inputs('inputs/21')
+print('Part 1e: ', part1(parse_inputs('examples/21')))
+print('Part 2e: ', part2(parse_inputs('examples/21')))
 
-print('Part 1: ', part1(*inputs))
-
+print('Part 1i: ', part1(parse_inputs('inputs/21')))
+print('Part 2i: ', part2(parse_inputs('inputs/21')))
 
 # tests ###########################################################################################
 def test_part1_example():
-    assert part1(*examples) == 152
+    assert part1(parse_inputs('examples/21')) == 152
     
-# def test_parse_file():
-#     assert examples == ({'dbpl': 5, 'zczc': 2, 'dvpt': 3, 'lfqf': 4, 'humn': 5, 'ljgn': 2, 'sllz': 4,
-#         'hmdt': 32}, {'root': ['pppw', '+', 'sjmn'], 'cczh': ['sllz', '+', 'lgvd'], 'ptdq': ['humn', '-', 'dvpt'], 
-#         'sjmn': ['drzm', '*', 'dbpl'], 'pppw': ['cczh', '/', 'lfqf'], 'lgvd': ['ljgn', '*', 'ptdq'],
-#         'drzm': ['hmdt', '-', 'zczc']})
+def test_part2_example():
+    assert part2(*parse_inputs('examples/21')) == 301
