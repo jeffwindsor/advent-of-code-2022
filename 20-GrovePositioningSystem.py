@@ -36,27 +36,41 @@ def move(start, number_of_places, max_index, vs):
 
     return vs
 
-def part1(values):
-    indexed_values = [V(i,v) for i,v in enumerate(values)]
-    results = indexed_values.copy()
-    zero_value = indexed_values[values.index(0)]
-    l = len(results)
-    
-    for v in indexed_values:
-        move(v.index, v.value, l - 1, results)
 
-    index = lambda n: ((n + zero_value.index + 1) % l) - 1
-    return sum([results[index(1000)].value, results[index(2000)].value, results[index(3000)].value])
+def decrypt(rounds, values):
+    length = len(values)
+    original_order = [V(i,v) for i,v in enumerate(values)]
+
+    decrypted_order = original_order.copy()
+    for r in range(rounds):
+        for v in original_order:
+            move(v.index, v.value, length - 1, decrypted_order)
+            
+    zero = original_order[values.index(0)]
+    find = lambda n: ((n + zero.index + 1) % length) - 1
+    return [decrypted_order [find(1000)].value, decrypted_order [find(2000)].value, decrypted_order [find(3000)].value]
+
+
+def part1(values): 
+    return sum(decrypt(1, values))
+
+def part2(values): 
+    values = list(map(lambda x: x * 811589153,values))
+    return sum(decrypt(10, values))
 
 examples = parse_file('examples/20')
-inputs = parse_file('inputs/20')
+inputs   = parse_file('inputs/20')
 
 print('Part 1: ', part1(inputs))
+print('Part 2: ', part2(inputs))
 
 
 # tests (pytest) ##############################################################
-def test_example(): 
-    assert part1( ) == 3 #[4,-3,2]
+def test_part1_example(): 
+    assert part1(examples) == 3 #[4,-3,2]
+    
+def test_part2_example(): 
+    assert part2(examples) == 1623178306
     
 def test_parse_file(): 
     assert parse_file('examples/20') == [1, 2, -3, 3, -2, 0, 4]
