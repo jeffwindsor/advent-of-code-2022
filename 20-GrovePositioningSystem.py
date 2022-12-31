@@ -26,15 +26,13 @@ def parse_file(filename):
 def move(start, number_of_places, max_index, vs):
     end = (start + number_of_places) % max_index
     if end == 0 and number_of_places < 0: end = max_index        #wtf special case
+        
     step = 1 if start < end else -1
-    
-    # print('o: ', [v.value for v in vs])
     for a in range(start, end, step):
         b = a + step 
         vs[a].index = b
         vs[b].index = a
         vs[a],vs[b] = vs[b],vs[a]
-        # print(a, b, [v.value for v in vs])
 
     return vs
 
@@ -42,19 +40,23 @@ def part1(values):
     indexed_values = [V(i,v) for i,v in enumerate(values)]
     results = indexed_values.copy()
     zero_value = indexed_values[values.index(0)]
-
     l = len(results)
+    
     for v in indexed_values:
         move(v.index, v.value, l - 1, results)
 
-    # print([r.value for r in results])
     index = lambda n: ((n + zero_value.index + 1) % l) - 1
     return sum([results[index(1000)].value, results[index(2000)].value, results[index(3000)].value])
+
+examples = parse_file('examples/20')
+inputs = parse_file('inputs/20')
+
+print('Part 1: ', part1(inputs))
 
 
 # tests (pytest) ##############################################################
 def test_example(): 
-    assert part1(parse_file('examples/20') ) == 3 #[4,-3,2]
+    assert part1( ) == 3 #[4,-3,2]
     
 def test_parse_file(): 
     assert parse_file('examples/20') == [1, 2, -3, 3, -2, 0, 4]
